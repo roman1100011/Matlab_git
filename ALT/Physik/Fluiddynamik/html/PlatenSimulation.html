@@ -1,0 +1,324 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Daten importieren</title><meta name="generator" content="MATLAB 9.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-05-06"><meta name="DC.source" content="PlatenSimulation.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Daten importieren</h1><pre class="codeinput">AccTable = readtable(<span class="string">'Versuch2_Daten.xlsx'</span>,<span class="string">'Range'</span>,<span class="string">'B6:B15006'</span>);
+timeTable = readtable(<span class="string">'Versuch2_Daten.xlsx'</span>,<span class="string">'Range'</span>,<span class="string">'A6:A15006'</span>);
+AccT = table2array(AccTable);
+<span class="comment">%Low pass filter</span>
+AccF = lowpass(AccT,1,1000);
+Acc = AccF - 9.5545;  <span class="comment">%subtract the gravity constant</span>
+time = table2array(timeTable);
+
+r = 0.28; <span class="comment">%m</span>
+m = 1.15668; <span class="comment">%kg</span>
+k = 31.33; <span class="comment">%N/m</span>
+Auslenkung = 0.2; <span class="comment">%Auslenkung zu t=0s in m</span>
+Airdensety = 1.225; <span class="comment">%kg/m3</span>
+Area = pi*power(r,2);
+v = 0.45; <span class="comment">%m/s arbitrary speed for calculation</span>
+
+<span class="comment">%grund Kreisfrequenz W0</span>
+Wbase = sqrt(k/m);
+
+
+totalspeed = trapz(Acc);
+
+
+<span class="comment">%numerical integration</span>
+V = cumtrapz(Acc)/1000; <span class="comment">%divided by 1000 because it was sampled with 1kH</span>
+steigung = time.*0.28; <span class="comment">%es gibt einen linearen fehler in den daten der wird mit der steigung entfernt</span>
+
+Z = cumtrapz(V)/1000+steigung+Auslenkung; <span class="comment">%divided by 1000 because it was sampled with 1kH; zus&auml;tzlich wird noch Auslenkung addiert um den 0 ofset zu erhalten</span>
+
+<span class="comment">%find local maximas</span>
+<span class="comment">%MaximasM = -1 &lt; Acc &amp; Acc &lt; 1;</span>
+maximasN = find(-0.05 &lt; Acc &amp; Acc &lt; 0.05);
+
+
+<span class="comment">%----------------creat diminishing amplitude------------------------------</span>
+
+AmpZ = V(maximasN);     <span class="comment">%Value of amplitudes</span>
+AmpN = AmpZ(AmpZ&gt;0);
+timeZ = time(maximasN);
+timeN = timeZ(AmpZ&gt;0); <span class="comment">%time of amplitudes</span>
+
+<span class="comment">%--------------------CurveFit---------------------------------------------</span>
+<span class="comment">%create new fit option</span>
+fo = fitoptions(<span class="string">'Method'</span>,<span class="string">'NonlinearLeastSquares'</span>,<span class="keyword">...</span>
+               <span class="string">'Lower'</span>,[-0.5,-1,-pi/2],<span class="keyword">...</span>
+               <span class="string">'Upper'</span>,[0.5,1,pi/2],<span class="keyword">...</span>
+               <span class="string">'StartPoint'</span>,[1 1 0]);
+<span class="comment">%create the fuction to be fitted</span>
+ft = fittype(<span class="string">'a*exp(-d/(2*m)*x)*cos(sqrt(k/m-power((d/(2*m)),2))*(x+p))'</span>,<span class="string">'problem'</span>,{<span class="string">'k'</span>,<span class="string">'m'</span>},<span class="string">'options'</span>,fo);
+<span class="comment">%!!!!!!!y=exp(alpha*t)</span>
+[vara,SimU1] = fit(time,Z,ft,<span class="string">'problem'</span>,{k,m})
+<span class="comment">%creat fitted curve with parameters for the amplitude</span>
+a = vara.a <span class="comment">%Amplitude</span>
+d = vara.d <span class="comment">%d&auml;mpfung</span>
+p = vara.p <span class="comment">%phasenverschiebung</span>
+fitedA = a.*exp(-d./(2*m).*time).*cos(sqrt(k/m-power((d/(2*m)),2)).*(time+p));
+<span class="comment">%----------------------Luftwiderstand modelieren----------------</span>
+dampeningK = d;
+Fd = v * d <span class="comment">%Drag in Newton</span>
+Cw = (2*Fd)/(Airdensety*power(v,2)*Area)
+
+
+
+
+
+<span class="comment">%-------------------------------------------------------------------------</span>
+
+<span class="comment">%Figure</span>
+<span class="comment">%Acceloration</span>
+numberPlots = 4; <span class="comment">%number of plots to expand and reduce the number of plots quickly</span>
+subplot(numberPlots,1,1)
+plot(time,Acc,time,AccT- 9.5545);
+grid(<span class="string">'minor'</span>)
+title(<span class="string">'Aceleration'</span>)
+xlabel(<span class="string">'time [s]'</span>)
+ylabel(<span class="string">'Aceleration'</span>)
+<span class="comment">%Velocity</span>
+subplot(numberPlots,1,2)
+plot(time,V)
+grid(<span class="string">'minor'</span>)
+title(<span class="string">'Velocity'</span>)
+xlabel(<span class="string">'time [s]'</span>)
+ylabel(<span class="string">'Velocity'</span>)
+<span class="comment">%dampening+fitted curve</span>
+subplot(numberPlots,1,3)
+plot(timeN,AmpN);
+grid(<span class="string">'minor'</span>)
+title(<span class="string">'Dampening'</span>)
+xlabel(<span class="string">'time [s]'</span>)
+ylabel(<span class="string">'Velocity'</span>)
+<span class="comment">%Amplitude of Z</span>
+subplot(numberPlots,1,4)
+plot(time,Z,time,fitedA);
+grid(<span class="string">'minor'</span>)
+title(<span class="string">'Curve Fit'</span>)
+xlabel(<span class="string">'time [s]'</span>)
+ylabel(<span class="string">'Y'</span>)
+</pre><pre class="codeoutput">
+vara = 
+
+     General model:
+     vara(x) = a*exp(-d/(2*m)*x)*cos(sqrt(k/m-power((d/(2*m)),2))*(x+p))
+     Coefficients (with 95% confidence bounds):
+       a =      0.1877  (0.1868, 0.1885)
+       d =      0.2874  (0.2852, 0.2895)
+       p =    -0.07961  (-0.0802, -0.07901)
+     Problem parameters:
+       k =       31.33
+       m =       1.157
+
+SimU1 = 
+
+  struct with fields:
+
+           sse: 2.5292
+       rsquare: 0.9649
+           dfe: 14998
+    adjrsquare: 0.9649
+          rmse: 0.0130
+
+
+a =
+
+    0.1877
+
+
+d =
+
+    0.2874
+
+
+p =
+
+   -0.0796
+
+
+Fd =
+
+    0.1293
+
+
+Cw =
+
+    4.2332
+
+</pre><img vspace="5" hspace="5" src="PlatenSimulation_01.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2022a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Daten importieren
+
+AccTable = readtable('Versuch2_Daten.xlsx','Range','B6:B15006');
+timeTable = readtable('Versuch2_Daten.xlsx','Range','A6:A15006');
+AccT = table2array(AccTable);
+%Low pass filter
+AccF = lowpass(AccT,1,1000);
+Acc = AccF - 9.5545;  %subtract the gravity constant
+time = table2array(timeTable);
+
+r = 0.28; %m
+m = 1.15668; %kg
+k = 31.33; %N/m
+Auslenkung = 0.2; %Auslenkung zu t=0s in m
+Airdensety = 1.225; %kg/m3
+Area = pi*power(r,2);
+v = 0.45; %m/s arbitrary speed for calculation
+
+%grund Kreisfrequenz W0
+Wbase = sqrt(k/m);             
+
+
+totalspeed = trapz(Acc);
+
+
+%numerical integration
+V = cumtrapz(Acc)/1000; %divided by 1000 because it was sampled with 1kH
+steigung = time.*0.28; %es gibt einen linearen fehler in den daten der wird mit der steigung entfernt
+
+Z = cumtrapz(V)/1000+steigung+Auslenkung; %divided by 1000 because it was sampled with 1kH; zusätzlich wird noch Auslenkung addiert um den 0 ofset zu erhalten
+
+%find local maximas
+%MaximasM = -1 < Acc & Acc < 1;
+maximasN = find(-0.05 < Acc & Acc < 0.05);
+
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHcreat diminishing amplitudeREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+
+AmpZ = V(maximasN);     %Value of amplitudes
+AmpN = AmpZ(AmpZ>0);
+timeZ = time(maximasN);
+timeN = timeZ(AmpZ>0); %time of amplitudes
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHCurveFitREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%create new fit option
+fo = fitoptions('Method','NonlinearLeastSquares',...
+               'Lower',[-0.5,-1,-pi/2],...
+               'Upper',[0.5,1,pi/2],...
+               'StartPoint',[1 1 0]);
+%create the fuction to be fitted
+ft = fittype('a*exp(-d/(2*m)*x)*cos(sqrt(k/m-power((d/(2*m)),2))*(x+p))','problem',{'k','m'},'options',fo);
+%!!!!!!!y=exp(alpha*t)
+[vara,SimU1] = fit(time,Z,ft,'problem',{k,m})
+%creat fitted curve with parameters for the amplitude
+a = vara.a %Amplitude
+d = vara.d %dämpfung
+p = vara.p %phasenverschiebung
+fitedA = a.*exp(-d./(2*m).*time).*cos(sqrt(k/m-power((d/(2*m)),2)).*(time+p));
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHLuftwiderstand modelierenREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+dampeningK = d;
+Fd = v * d %Drag in Newton
+Cw = (2*Fd)/(Airdensety*power(v,2)*Area)
+
+
+
+
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+%Figure
+%Acceloration
+numberPlots = 4; %number of plots to expand and reduce the number of plots quickly
+subplot(numberPlots,1,1)
+plot(time,Acc,time,AccT- 9.5545);
+grid('minor')
+title('Aceleration')
+xlabel('time [s]')
+ylabel('Aceleration')
+%Velocity
+subplot(numberPlots,1,2)
+plot(time,V)
+grid('minor')
+title('Velocity')
+xlabel('time [s]')
+ylabel('Velocity')
+%dampening+fitted curve
+subplot(numberPlots,1,3)
+plot(timeN,AmpN);
+grid('minor')
+title('Dampening')
+xlabel('time [s]')
+ylabel('Velocity')
+%Amplitude of Z
+subplot(numberPlots,1,4)
+plot(time,Z,time,fitedA);
+grid('minor')
+title('Curve Fit')
+xlabel('time [s]')
+ylabel('Y')
+
+
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>

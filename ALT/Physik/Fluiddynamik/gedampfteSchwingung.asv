@@ -1,0 +1,18 @@
+%% Gedämpfte schwingung
+t=0:0.001:20;
+alpha = -0.5;
+y=exp(alpha*t).*cos(2*pi*2.*t);
+plot(t,y)
+
+%% Integrations versuche
+ak= 0.5; %abkling koefizient
+ST = 1/60; %Sampingtime
+A = 3;   %Amplitude
+f = 5;
+phi = pi; %Phasenverschiebung
+Omega = 2*pi*f; %kreisfrequenz
+t_axis = 0:ST:10; %time axis 0-10s in the samplingtime-increments
+fun = @(t) A*exp(-ak*t)*cos(Omega*t+phi);
+z_axis = A*exp(-ak*t_axis).*cos(Omega.*t_axis+phi)
+plot(t_axis)
+

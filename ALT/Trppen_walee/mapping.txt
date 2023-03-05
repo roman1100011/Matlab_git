@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <math.h>
+
+
+
+
+
+
+double mapping(float adc_value_mV){
+    double distance = 0.0f; //distance in mm
+    double infY =360 , supY = 2360; //Window for sensor values
+    double voltage_mV = adc_value_mV;
+    double p1 = -1.127 * pow(10, -14), p2 = 8.881 * pow(10, -11), p3 = -2.76 * pow(10, -7), p4 = 0.0004262, p5 = -0.3363, p6 = 120.1 ; //faktoren für polynomkurve -> von matlab exportiert
+    if(voltage_mV > infY && voltage_mV < supY){
+        distance = p1 * pow(voltage_mV, 5) + p2 * pow(voltage_mV, 4) + p3 * pow(voltage_mV, 3) + p4 * pow(voltage_mV, 2) + p5 * voltage_mV + p6;
+    }
+    return (distance);
+}
+
+//----------testing Variables-------------
+float valueTest;
+
+int main() {
+    //ir_distance_mV = 1.0e3f * ir_analog_in.read() * 3.3f;
+    
+    printf("distance: %lf\n", mapping(500 ));
+    printf("test pow function 3,2^2= %lf\n", pow(2, -2));
+
+    return 0;
+}
+
