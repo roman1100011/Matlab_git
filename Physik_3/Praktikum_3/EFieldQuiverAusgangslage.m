@@ -13,7 +13,7 @@
 clear;
 % Vorbereitung Datenstruktur für Feldplot
 % Shift um 0.001, damit Division durch Null vermieden wird
-[x,y] = meshgrid(-2.001:.1:2,-1.001:.1:1); 
+[x,y] = meshgrid(-20.001:.1:20,-10.001:.1:10); 
 [N,M] = size(x);
 
 % Konstanter Vorfaktor mit elektrischer Feldkonstante Epsilon_0
@@ -32,6 +32,10 @@ Q1 = 2;
 x2 = 0.65;
 y2 = 0.5;
 Q2 = 1.3; 
+%--------------------Ladung 3---------------------------------------
+x3 = 0.01;
+y3 = 0.23;
+Q3 = -1.3; 
 
 % Für den "quiver"-Feldplot werden die Bilder nicht schön, wenn
 % die Vektoren nahe an der Punktquelle zu gross werden. Faktor 
@@ -77,14 +81,30 @@ for i = 1:N
         end
     end
 end
-
-Ex=Ex1+Ex2
-Ey=Ey1+Ey2
+%% -------------------------Itteration für Quelle 2---------------------
+for i = 1:N
+    for j = 1:M
+        rsquare(i,j) = (x(i,j)-x3)^2 + (y(i,j)-y3)^2;
+        dirx(i,j)= (x(i,j)-x3)/sqrt(rsquare(i,j));
+        diry(i,j)= (y(i,j)-y3)/sqrt(rsquare(i,j));
+        % Achtung bei Division: Wenn die Quelle auf einem 
+        % Gitterpunkt gewählt werden, könnte es unendlich geben...
+        Ex3(i,j) = constE*Q3*dirx(i,j)/rsquare(i,j); 
+        Ey3(i,j) = constE*Q3*diry(i,j)/rsquare(i,j);
+        Eabs = sqrt(Ex3(i,j)^2+Ey3(i,j)^2);
+        if Eabs > Eplotmax
+            Ex3(i,j)=+Eplotmax*Ex3(i,j)/Eabs;
+            Ey3(i,j)=+Eplotmax*Ey3(i,j)/Eabs;
+        end
+    end
+end
+Ex=Ex1+Ex2+Ex3
+Ey=Ey1+Ey2+Ey3
 
 % Für den Feldlinienplot muss man die Startpositionen definieren.
 % Sie sollen auf einem Kreis um die Punktladung liegen:
 CR=0.1;    % Radius
-CN=20;     % Anzahl Elemente auf dem Kreis
+CN=100;     % Anzahl Elemente auf dem Kreis
 phi=0.15;  % Phasenverschiebung gibt manchmal schönere Plots
 for k = 1:CN
     C1x(k)=x1+CR*sin(k*2*pi/CN+phi);
@@ -94,9 +114,13 @@ for k = 1:CN
     C2x(k)=x2+CR*sin(k*2*pi/CN+phi);
     C2y(k)=y2+CR*cos(k*2*pi/CN+phi);
 end
-
+for k = 1:CN
+    C3x(k)=x3+CR*sin(k*2*pi/CN+phi);
+    C3y(k)=y3+CR*cos(k*2*pi/CN+phi);
+end
 clf; hold on; axis image;
 streamline(x,y,Ex,Ey,C1x,C1y);
 streamline(x,y,Ex,Ey,C2x,C2y);
+streamline(x,y,Ex,Ey,C3x,C3y);
 quiver(x,y,Ex,Ey,'color','k');
 xlabel('x'); ylabel('y');title('E-Feld für Punktladung');

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<productAdditionalComps>
+  <dependsOn>
+    <component>
+      <name>hardwaresupportpkgs/testmeas/imaq_genericvideo_maci64</name>
+      <instrset>0</instrset>
+      <locale />
+      <platformList>
+        <platform>maci64</platform>
+      </platformList>
+      <version>1652568501</version>
+    </component>
+  </dependsOn>
+  <isControllingProduct>false</isControllingProduct>
+  <licenseAgreementType>ASLA</licenseAgreementType>
+  <platform>maci64</platform>
+  <productBaseCode>OSVIDEO</productBaseCode>
+  <productName>Image Acquisition Toolbox Support Package for OS Generic Video Interface</productName>
+  <productNumber>2044</productNumber>
+  <productType>hardwareSupportPkg</productType>
+  <productVersion>22.2.0</productVersion>
+  <releaseDescription>R2022b</releaseDescription>
+  <releaseFamily>R2022b</releaseFamily>
+</productAdditionalComps>
